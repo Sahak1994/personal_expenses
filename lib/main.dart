@@ -23,8 +23,25 @@ class MyApp extends StatelessWidget {
 class Home extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
-    return Container(
-      
+    return Scaffold(
+      appBar: AppBar(
+        title: Text('Personal Expenses')
+      ),
+      body: Column(
+        children: [
+          Container(
+            width: double.infinity,
+            child: Card(
+              color: Colors.blue,
+              child: Text('CHART!',),
+              elevation: 5.0,
+            ),
+          ),
+          Card(
+            child: Text('LIST OF TX'),
+          )
+        ],
+      ),
     );
   }
 }
