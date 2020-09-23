@@ -1,11 +1,12 @@
 import 'package:flutter/material.dart';
+import 'package:intl/intl.dart';
 
-void main() {
-  runApp(MyApp());
-}
+// Models
+import 'package:personal_expenses/transaction.dart';
+
+void main() => runApp(MyApp()); 
 
 class MyApp extends StatelessWidget {
-  // This widget is the root of your application.
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
@@ -15,12 +16,27 @@ class MyApp extends StatelessWidget {
         primarySwatch: Colors.blue,
         visualDensity: VisualDensity.adaptivePlatformDensity,
       ),
-      home: Home(),
+      home: MyHomePage(),
     );
   }
 }
 
-class Home extends StatelessWidget {
+class MyHomePage extends StatelessWidget {
+  final List<Transaction> _transactions = [
+    Transaction(
+      id: 't1',
+      title: 'New Shoes',
+      amount: 69.99,
+      date: DateTime.now(),
+    ),
+    Transaction(
+      id: 't2',
+      title: 'Weekly Groceries',
+      amount: 16.53,
+      date: DateTime.now(),
+    ),
+  ];
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -28,7 +44,8 @@ class Home extends StatelessWidget {
         title: Text('Personal Expenses')
       ),
       body: Column(
-        children: [
+        mainAxisAlignment: MainAxisAlignment.spaceAround,
+        children: <Widget>[
           Container(
             width: double.infinity,
             child: Card(
@@ -37,8 +54,48 @@ class Home extends StatelessWidget {
               elevation: 5.0,
             ),
           ),
-          Card(
-            child: Text('LIST OF TX'),
+          Column(
+            children: _transactions.map((tx) {
+              return Card(
+                child: Row(
+                  children: <Widget>[
+                    Container(
+                      margin: EdgeInsets.symmetric(vertical: 10.0, horizontal: 15.0),
+                      padding: EdgeInsets.all(10.0),
+                      decoration: BoxDecoration(
+                        border: Border.all(width: 2.0, color: Colors.purple)
+                      ),
+                      child: Text(
+                        '\$${tx.amount}',
+                        style: TextStyle(
+                          fontWeight: FontWeight.bold,
+                          fontSize: 20.0,
+                          color: Colors.purple,
+                        ),
+                      ),
+                    ),
+                    Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: <Widget>[
+                        Text(
+                          tx.title,
+                          style: TextStyle(
+                            fontWeight: FontWeight.bold,
+                            fontSize: 16.0,
+                          ),
+                        ),
+                        Text(
+                          DateFormat.yMMMd().format(tx.date),
+                          style: TextStyle(
+                            color: Colors.grey,
+                          ),
+                        ),
+                      ],
+                    ),
+                  ],
+                ),
+              );
+            }).toList(),
           )
         ],
       ),
