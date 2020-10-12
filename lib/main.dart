@@ -6,6 +6,7 @@ import 'package:personal_expenses/models/transaction.dart';
 // Widgets
 import 'package:personal_expenses/widgets/transaction_list.dart';
 import 'package:personal_expenses/widgets/new_transaction.dart';
+import 'package:personal_expenses/widgets/chart.dart';
 
 void main() => runApp(MyApp()); 
 
@@ -48,20 +49,13 @@ class MyHomePage extends StatefulWidget {
 }
 
 class _MyHomePageState extends State<MyHomePage> {
-  final List<Transaction> _userTransactions = [
-    Transaction(
-      id: 't1',
-      title: 'New Shoes',
-      amount: 69.99,
-      date: DateTime.now(),
-    ),
-    Transaction(
-      id: 't2',
-      title: 'Weekly Groceries',
-      amount: 16.53,
-      date: DateTime.now(),
-    ),
-  ];
+  final List<Transaction> _userTransactions = [];
+
+  List get _recentTransactions {
+    return _userTransactions.where((tx) {
+      return tx.date.isAfter(DateTime.now().subtract(Duration(days: 7)));
+    }).toList();
+  }
 
   void _addNewTransaction({ String title, double amount }) {
     final newTx = Transaction(
@@ -101,14 +95,9 @@ class _MyHomePageState extends State<MyHomePage> {
       body: SingleChildScrollView(
         child: Column(
           children: <Widget>[
-            Container(
-              width: double.infinity,
-              child: Card(
-                color: Colors.blue,
-                child: Text('CHART!',),
-                elevation: 5.0,
-              ),
-            ),
+           Chart(
+             recentTransactions: _recentTransactions,
+           ),
             TransactionList(_userTransactions),
           ],
         ),
