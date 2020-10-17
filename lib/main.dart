@@ -25,7 +25,10 @@ class MyApp extends StatelessWidget {
           headline6: TextStyle(
             fontFamily: 'OpenSans',
             fontWeight: FontWeight.bold,
-            fontSize: 18.0
+            fontSize: 18.0,
+          ),
+          button: TextStyle(
+            color: Colors.white
           ),
         ),
         appBarTheme: AppBarTheme(
@@ -33,7 +36,7 @@ class MyApp extends StatelessWidget {
             headline6: TextStyle(
               fontFamily: 'OpenSans',
               fontWeight: FontWeight.bold,
-              fontSize: 20.0
+              fontSize: 20.0,
             ),
           )
         ),
@@ -95,9 +98,9 @@ class _MyHomePageState extends State<MyHomePage> {
       body: SingleChildScrollView(
         child: Column(
           children: <Widget>[
-           Chart(
-             recentTransactions: _recentTransactions,
-           ),
+            Chart(
+              recentTransactions: _recentTransactions,
+            ),
             TransactionList(_userTransactions),
           ],
         ),
