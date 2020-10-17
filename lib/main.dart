@@ -60,12 +60,12 @@ class _MyHomePageState extends State<MyHomePage> {
     }).toList();
   }
 
-  void _addNewTransaction({ String title, double amount }) {
+  void _addNewTransaction({ String title, double amount, DateTime date}) {
     final newTx = Transaction(
       id: DateTime.now().toString(),
       title: title,
       amount: amount,
-      date: DateTime.now(),
+      date: date,
     );
 
     setState(() => _userTransactions.add(newTx));
@@ -81,6 +81,10 @@ class _MyHomePageState extends State<MyHomePage> {
         );
       },
     );
+  }
+
+  void _deleteTx(String id) {
+    setState(() =>  _userTransactions.removeWhere((tx) => tx.id == id));
   }
 
   @override
@@ -101,7 +105,7 @@ class _MyHomePageState extends State<MyHomePage> {
             Chart(
               recentTransactions: _recentTransactions,
             ),
-            TransactionList(_userTransactions),
+            TransactionList(_userTransactions, _deleteTx),
           ],
         ),
       ),

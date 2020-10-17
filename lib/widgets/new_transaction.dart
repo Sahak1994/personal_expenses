@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:intl/intl.dart';
 
 class NewTransaction extends StatefulWidget {
   final Function addNewTransaction;
@@ -13,23 +14,41 @@ class NewTransaction extends StatefulWidget {
 
 class _NewTransactionState extends State<NewTransaction> {
   final TextEditingController _titleController = TextEditingController();
-
   final TextEditingController _amountController = TextEditingController();
+  DateTime _selectedDate;
 
   void _submitData() {
-    final enteredTitle = _titleController.text;
-    final enteredAmount = double.tryParse(_amountController.text);
+    if (_amountController.text.isEmpty) {
+      return;
+    }
 
-    if (enteredTitle.isEmpty || enteredAmount <= 0) {
+    final enteredTitle = _titleController.text;
+    final enteredAmount = double.parse(_amountController.text);
+
+    if (enteredTitle.isEmpty || enteredAmount <= 0 || _selectedDate == null) {
       return;
     }
 
     widget.addNewTransaction(
       title: enteredTitle,
       amount: enteredAmount,
+      date: _selectedDate
     );
 
     Navigator.of(context).pop();
+  }
+
+  void _pickDate() {
+    showDatePicker(
+      context: context,
+      initialDate: DateTime.now(), 
+      firstDate: DateTime(2020),
+      lastDate: DateTime.now(),
+    ).then((date) {
+      if (date == null) return;
+
+      setState(() => _selectedDate = date);
+    });
   }
 
   @override
@@ -56,14 +75,20 @@ class _NewTransactionState extends State<NewTransaction> {
               margin: EdgeInsets.only(top: 8.0),
               child: Row(
                 children: [
-                  Text('No Date Chosen!'),
+                  Expanded(
+                    child: Text(
+                      _selectedDate == null ? 'No Date Chosen!' 
+                        : 'Picked date: ${DateFormat.yMd().format(_selectedDate)}'
+                    )
+                  ),
                   SizedBox(width: 10.0,),
                   Material(
                     color: Colors.transparent,
                     child: InkWell(
-                      onTap: () {},
+                      onTap: _pickDate,
                       borderRadius: BorderRadius.all(Radius.circular(8.0)),
-                      child: Padding(
+                      child: Container(
+                        margin: EdgeInsets.only(right: 5.0),
                         padding: EdgeInsets.all(10.0),
                         child: Text('Choose Date', 
                           style: TextStyle(
