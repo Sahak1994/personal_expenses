@@ -14,8 +14,7 @@ class TransactionList extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Container(
-      height: 430.0,
+    return Padding(
       padding: EdgeInsets.only(top: 10.0),
       child: transactions.isEmpty ? Column(
         children: <Widget>[
