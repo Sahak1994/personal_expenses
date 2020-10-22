@@ -11,11 +11,11 @@ import 'package:personal_expenses/widgets/chart.dart';
 
 void main() {
   // To turn off landscape mode
-  WidgetsFlutterBinding.ensureInitialized();
-  SystemChrome.setPreferredOrientations([
-    DeviceOrientation.portraitUp,
-    DeviceOrientation.portraitDown,
-  ]);
+  // WidgetsFlutterBinding.ensureInitialized();
+  // SystemChrome.setPreferredOrientations([
+  //   DeviceOrientation.portraitUp,
+  //   DeviceOrientation.portraitDown,
+  // ]);
   runApp(MyApp());
 } 
 
@@ -61,6 +61,7 @@ class MyHomePage extends StatefulWidget {
 }
 
 class _MyHomePageState extends State<MyHomePage> {
+  bool _showChart = false;
   final List<Transaction> _userTransactions = [];
 
   List get _recentTransactions {
@@ -98,6 +99,7 @@ class _MyHomePageState extends State<MyHomePage> {
 
   @override
   Widget build(BuildContext context) {
+    final bool isLandscape = MediaQuery.of(context).orientation == Orientation.landscape;
     final appBar = AppBar(
       title: Text('Personal Expenses'),
       actions: <Widget>[
@@ -107,26 +109,44 @@ class _MyHomePageState extends State<MyHomePage> {
         ),
       ],
     );
-
+    final transactionList = Container(
+      height: (
+        MediaQuery.of(context).size.height -appBar.preferredSize.height
+        - MediaQuery.of(context).padding.top) * 0.7,
+      child: TransactionList(_userTransactions, _deleteTx),
+    );
     return Scaffold(
       appBar: appBar,
       body: SingleChildScrollView(
         child: Column(
           children: <Widget>[
-            Container(
+            if (isLandscape) Row(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                Text('Show/Hide Chart Bar', style: Theme.of(context).textTheme.headline6,),
+                Switch(
+                  value: _showChart,
+                  onChanged: (bool val) => setState(() => _showChart = val),
+                ),
+              ],
+            ),
+            if (!isLandscape) Container(
               height: (
                 MediaQuery.of(context).size.height - appBar.preferredSize.height
-                  - MediaQuery.of(context).padding.top) * 0.4,
+                  - MediaQuery.of(context).padding.top) * 0.3,
               child: Chart(
                 recentTransactions: _recentTransactions,
               ),
             ),
-            Container(
+            if (!isLandscape) transactionList,
+            if (isLandscape) _showChart ? Container(
               height: (
-                MediaQuery.of(context).size.height -appBar.preferredSize.height
-                - MediaQuery.of(context).padding.top) * 0.6,
-              child: TransactionList(_userTransactions, _deleteTx),
-            ),
+                MediaQuery.of(context).size.height - appBar.preferredSize.height
+                  - MediaQuery.of(context).padding.top) * 0.7,
+              child: Chart(
+                recentTransactions: _recentTransactions,
+              ),
+            ) : transactionList,
           ],
         ),
       ),
