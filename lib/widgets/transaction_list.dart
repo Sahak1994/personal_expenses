@@ -14,6 +14,7 @@ class TransactionList extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final bool isPortrait = MediaQuery.of(context).orientation == Orientation.portrait;
     return Padding(
       padding: EdgeInsets.only(top: 10.0),
       child: transactions.isEmpty ? LayoutBuilder(
@@ -63,9 +64,14 @@ class TransactionList extends StatelessWidget {
               subtitle: Text(
                  DateFormat.yMMMd().format(transactions[index].date),
               ),
-              trailing: IconButton(
+              trailing: isPortrait ? IconButton(
                 icon: Icon(Icons.delete),
                 color: Theme.of(context).errorColor,
+                onPressed: () => deleteTx( transactions[index].id),
+              ) : FlatButton.icon(
+                icon: Icon(Icons.delete),
+                label: Text('Delete'),
+                textColor: Theme.of(context).errorColor,
                 onPressed: () => deleteTx( transactions[index].id),
               ),
             ),
