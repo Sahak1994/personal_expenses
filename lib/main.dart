@@ -63,9 +63,26 @@ class MyHomePage extends StatefulWidget {
   _MyHomePageState createState() => _MyHomePageState();
 }
 
-class _MyHomePageState extends State<MyHomePage> {
+class _MyHomePageState extends State<MyHomePage> with WidgetsBindingObserver {
   bool _showChart = false;
   final List<Transaction> _userTransactions = [];
+
+  @override
+  void initState() {
+    WidgetsBinding.instance.addObserver(this);
+    super.initState();
+  }
+
+  @override
+  void dispose() {
+    WidgetsBinding.instance.removeObserver(this);
+
+    super.dispose();
+  }
+
+  void didChangeAppLifecycleState(AppLifecycleState state) {
+    print('state - $state');
+  }
 
   List get _recentTransactions {
     return _userTransactions.where((tx) {
@@ -100,11 +117,56 @@ class _MyHomePageState extends State<MyHomePage> {
     setState(() =>  _userTransactions.removeWhere((tx) => tx.id == id));
   }
 
+  List<Widget> _buildLandscapeContent(
+    MediaQueryData mediaQuery,
+    AppBar appBar,
+    Widget transactionList,
+  ) {
+    return [
+      Row(
+        mainAxisAlignment: MainAxisAlignment.center,
+        children: [
+          Text('Show/Hide Chart Bar', style: Theme.of(context).textTheme.headline6,),
+          Switch.adaptive(
+            activeColor: Theme.of(context).accentColor,
+            value: _showChart,
+            onChanged: (bool val) => setState(() => _showChart = val),
+          ),
+        ],
+      ), _showChart ? Container(
+        height: (
+          mediaQuery.size.height - appBar.preferredSize.height
+            - mediaQuery.padding.top) * 0.7,
+        child: Chart(
+          recentTransactions: _recentTransactions,
+        ),
+      ) : transactionList,
+    ];
+  }
+
+  List<Widget> _buildPortraitContent(
+    MediaQueryData mediaQuery,
+    AppBar appBar,
+    Widget transactionList,
+  ) {
+    return [
+      Container(
+        height: (
+          mediaQuery.size.height - appBar.preferredSize.height
+            - mediaQuery.padding.top) * 0.3,
+        child: Chart(
+          recentTransactions: _recentTransactions,
+        ),
+      ),
+      transactionList,
+    ];
+  }
+
   @override
   Widget build(BuildContext context) {
     final MediaQueryData mediaQuery = MediaQuery.of(context);
     final bool isLandscape = mediaQuery.orientation == Orientation.landscape;
-    final appBar = AppBar(
+    final PreferredSizeWidget appBar = AppBar(
       title: Text('Personal Expenses'),
       actions: <Widget>[
         IconButton(
@@ -113,7 +175,7 @@ class _MyHomePageState extends State<MyHomePage> {
         ),
       ],
     );
-    final transactionList = Container(
+    final Widget transactionList = Container(
       height: (
         mediaQuery.size.height -appBar.preferredSize.height
         - mediaQuery.padding.top) * 0.7,
@@ -125,40 +187,22 @@ class _MyHomePageState extends State<MyHomePage> {
       body: SingleChildScrollView(
         child: Column(
           children: <Widget>[
-            if (isLandscape) Row(
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: [
-                Text('Show/Hide Chart Bar', style: Theme.of(context).textTheme.headline6,),
-                Switch.adaptive(
-                  activeColor: Theme.of(context).accentColor,
-                  value: _showChart,
-                  onChanged: (bool val) => setState(() => _showChart = val),
-                ),
-              ],
+            if (isLandscape) ..._buildLandscapeContent(
+              mediaQuery,
+              appBar,
+              transactionList,
             ),
-            if (!isLandscape) Container(
-              height: (
-                mediaQuery.size.height - appBar.preferredSize.height
-                  - mediaQuery.padding.top) * 0.3,
-              child: Chart(
-                recentTransactions: _recentTransactions,
-              ),
+            if (!isLandscape) ..._buildPortraitContent(
+              mediaQuery,
+              appBar,
+              transactionList,
             ),
-            if (!isLandscape) transactionList,
-            if (isLandscape) _showChart ? Container(
-              height: (
-                mediaQuery.size.height - appBar.preferredSize.height
-                  - mediaQuery.padding.top) * 0.7,
-              child: Chart(
-                recentTransactions: _recentTransactions,
-              ),
-            ) : transactionList,
           ],
         ),
       ),
       floatingActionButtonLocation: FloatingActionButtonLocation.centerFloat,
       floatingActionButton: Platform.isIOS ? Container() : FloatingActionButton(
-        child: Icon(Icons.add),
+        child: const Icon(Icons.add),
         onPressed: () => _startAddNewTransaction(context),
       ),
     );

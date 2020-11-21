@@ -4,9 +4,10 @@ import 'package:intl/intl.dart';
 class NewTransaction extends StatefulWidget {
   final Function addNewTransaction;
 
-  NewTransaction({
+  const NewTransaction({
     @required this.addNewTransaction,
   });
+  
 
   @override
   _NewTransactionState createState() => _NewTransactionState();
@@ -72,7 +73,7 @@ class _NewTransactionState extends State<NewTransaction> {
             crossAxisAlignment: CrossAxisAlignment.end,
             children: <Widget>[
               TextField(
-                decoration: InputDecoration(labelText: 'Title'),
+                decoration: const InputDecoration(labelText: 'Title'),
                 controller: _titleController,
                 onSubmitted: (_) => _submitData(),
               ),
@@ -83,7 +84,7 @@ class _NewTransactionState extends State<NewTransaction> {
                 onSubmitted: (_) => _submitData(),
               ),
               Container(
-                margin: EdgeInsets.only(top: 8.0),
+                margin: const EdgeInsets.only(top: 8.0),
                 child: Row(
                   children: [
                     Expanded(
@@ -92,15 +93,15 @@ class _NewTransactionState extends State<NewTransaction> {
                           : 'Picked date: ${DateFormat.yMd().format(_selectedDate)}'
                       )
                     ),
-                    SizedBox(width: 10.0,),
+                    const SizedBox(width: 10.0,),
                     Material(
                       color: Colors.transparent,
                       child: InkWell(
                         onTap: _pickDate,
-                        borderRadius: BorderRadius.all(Radius.circular(8.0)),
+                        borderRadius: const BorderRadius.all(Radius.circular(8.0)),
                         child: Container(
-                          margin: EdgeInsets.only(right: 5.0),
-                          padding: EdgeInsets.all(10.0),
+                          margin: const EdgeInsets.only(right: 5.0),
+                          padding: const EdgeInsets.all(10.0),
                           child: Text('Choose Date', 
                             style: TextStyle(
                               fontWeight: FontWeight.bold,
@@ -114,7 +115,7 @@ class _NewTransactionState extends State<NewTransaction> {
                 ),
               ),
               RaisedButton(
-                child: Text('Add Transaction'),
+                child: const Text('Add Transaction'),
                 textColor: Theme.of(context).textTheme.button.color,
                 color: Theme.of(context).primaryColor,
                 onPressed: _submitData,
